@@ -19,6 +19,12 @@
     <xacro:property name="caster_wheel_offset_x" value="0.075"/>
     <xacro:property name="caster_wheel_offset_z" value="${wheel_offset_z - wheel_radius + caster_wheel_radius}"/>
 
+    <xacro:property name="chassis_top_length" value="0.4064"/>
+    <xacro:property name="chassis_top_width" value="0.254"/>
+    <xacro:property name="chassis_top_height" value="0.1905"/>
+    <xacro:property name="chassis_top_mass" value="0.0"/>
+    <xacro:property name="lid_thickness" value="0.0254"/>
+
     <material name="white">
         <color rgba="1 1 1 1" />
     </material>
@@ -79,7 +85,7 @@
             <geometry>
                 <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
             </geometry>
-            <material name="gold"/>
+            <material name="black"/>
         </visual>
         <collision>
             <origin xyz="${chassis_length/2} 0 ${chassis_height/2}"/>
@@ -93,7 +99,63 @@
     </link>
 
     <gazebo reference="chassis">
+        <material>Gazebo/Black</material>
+    </gazebo>
+
+    <!-- CHASSIS TOP LINK -->
+
+    <joint name="chassis_top_joint" type="fixed">
+        <origin xyz="${chassis_length/2} 0 ${chassis_height}" rpy="0 0 0" />
+        <parent link="chassis"/>
+        <child link="chassis_top"/>
+    </joint>
+
+    <link name="chassis_top">
+        <visual>
+            <origin xyz="0 0 ${chassis_top_height/2}"/>
+            <geometry>
+                <box size="${chassis_top_length} ${chassis_top_width} ${chassis_top_height}" />
+            </geometry>
+            <material name="gold" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="${chassis_top_length} ${chassis_top_width} ${chassis_top_height}" />
+            </geometry>
+        </collision>
+    </link>
+
+    <gazebo reference="chassis_top">
         <material>Gazebo/Gold</material>
+    </gazebo>
+
+    <!-- LID LINK -->
+
+    <joint name="lid_joint" type="fixed">
+        <origin xyz="0 0 ${chassis_top_height}" />
+        <parent link="chassis_top"/>
+        <child link="lid"/>
+    </joint>
+
+    <link name="lid">
+        <visual>
+            <origin xyz="0 0 ${lid_thickness/2}" />
+            <geometry>
+                <box size="${chassis_top_length} ${chassis_top_width} ${lid_thickness}" />
+            </geometry>
+            <material name="black" />
+        </visual>
+        <collision>
+            <origin xyz="0 0 ${lid_thickness}" />
+            <geometry>
+                <box size="${chassis_top_length} ${chassis_top_width} ${lid_thickness}" />
+            </geometry>
+        </collision>
+    </link>
+
+    <gazebo reference="lid">
+        <material>Gazebo/Black</material>
     </gazebo>
 
     <!-- LEFT WHEEL LINK -->
